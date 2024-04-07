@@ -5,7 +5,6 @@ namespace Gmxiaoli\Curd\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
-
 class G extends Command {
     protected $signature = 'gmxiaoli:g
     {--del_module= : delete module name}
@@ -84,6 +83,7 @@ class G extends Command {
 
         if (empty($only)) {
             $this->createController();
+            $this->createRequest();
             $this->createLogic();
             $this->createService();
             $this->createModel();
@@ -91,6 +91,9 @@ class G extends Command {
             switch ($only) {
                 case 'controller':
                     $this->createController();
+                    break;
+                case 'request':
+                    $this->createRequest();
                     break;
                 case 'model':
                     $this->createModel();
@@ -116,6 +119,8 @@ class G extends Command {
 namespace --namespace--;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\--filePath--\--controllerName--Request;
+
 use App\Http\Requests\PublicRequest;
 use AllowDynamicProperties;
 use App\Exceptions\BusinessException;
@@ -132,7 +137,7 @@ use App\Logics\--controllerName--Logic;
      * 创建
      * @datetime --datetime--
      */
-    public function create(Request $request): JsonResponse {
+    public function create(--controllerName--Request $request): JsonResponse {
         $request->validate(["--lowercasecontrollerName--_create"]);
         $fields = ['', ''];
         foreach ($fields as $field) {
@@ -146,10 +151,25 @@ use App\Logics\--controllerName--Logic;
      * 删除
      * @datetime --datetime--
      */
-    public function delete(Request $request): JsonResponse {
+    public function delete(--controllerName--Request $request): JsonResponse {
         $request->validate(["--lowercasecontrollerName--_delete"]);
         $id = $request->input('id');
         $this->--lowercasecontrollerName--Logic->delete($id);
+        return $this->success();
+    }
+
+     /**
+     * 修改
+     * @datetime --datetime--
+     */
+    public function edit(--controllerName--Request $request): JsonResponse {
+        $request->validate(['--lowercasecontrollerName--_edit']);
+        $fields = ['', ''];
+        foreach ($fields as $field) {
+            $data[$field] = $request->input($field);
+        }
+        $id = $request->input('id');
+        $this->--lowercasecontrollerName--Logic->edit($id, $data);
         return $this->success();
     }
 
@@ -157,7 +177,7 @@ use App\Logics\--controllerName--Logic;
      * 列表
      * @datetime --datetime--
      */
-    public function list(Request $request): JsonResponse {
+    public function list(--controllerName--Request $request): JsonResponse {
         $request->validate(["--lowercasecontrollerName--_list"]);
         $page = $request->input('page');
         $page_size = $request->input('page_size');
@@ -174,8 +194,8 @@ use App\Logics\--controllerName--Logic;
      * 详情
      * @datetime --datetime--
      */
-    public function detail(PublicRequest $request): JsonResponse {
-        $request->validate('id');
+    public function detail(--controllerName--Request $request): JsonResponse {
+        $request->validate(['--lowercasecontrollerName--_detail']);
         $id = $request->input('id');
         $res = $this->--lowercasecontrollerName--Logic->detail($id);
         return $this->success($res);
@@ -184,14 +204,17 @@ use App\Logics\--controllerName--Logic;
 
 TOT;
         if ($this->duan == "Store") {
+            $filePath   = 'Admin\Store';
             $controllerPath   = base_path('app/Http/Controllers/Admin/Store');
             $commonController = "StoreCommonController";
         }
         if ($this->duan == "Manager") {
+            $filePath   = 'Admin\Manager';
             $controllerPath   = base_path('app/Http/Controllers/Admin/Manager');
             $commonController = "ManagerCommonController";
         }
         if ($this->duan == "App") {
+            $filePath   ='Api';
             $controllerPath   = base_path('app/Http/Controllers/Api');
             $commonController = "ApiCommonController";
         }
@@ -200,13 +223,14 @@ TOT;
         $currentNameSpace = $this->calculationNameSpace($controllerPath);
 
         $content = str_replace([
+            '--filePath--',
             '--controllerName--',
             '--lowercasecontrollerName--',
             '--namespace--',
             '--CommonController--',
             '--datetime--'
         ],
-            [$this->className, lcfirst($this->className), $currentNameSpace, $commonController,date("Y-m-d H:i:s")], $controllerStub);
+            [$filePath,$this->className, lcfirst($this->className), $currentNameSpace, $commonController,date("Y-m-d H:i:s")], $controllerStub);
 
         $controllerFile = $controllerPath . self::DS . $this->className . 'Controller.php';
         $createFlag     = true;
@@ -222,6 +246,76 @@ TOT;
         $fileSize = file_put_contents($controllerFile, $content);
 
         $this->info($controllerFile . ' 文件创建成功' . $fileSize);
+    }
+
+    private function createRequest() {
+
+        $requestStub = <<<'TOT'
+<?php
+
+namespace --namespace--;
+use App\Http\Requests\ScenesBaseRequest;
+
+class --requestName--Request extends ScenesBaseRequest{
+        public function rules(): array {
+        return [
+            'page' => 'required|numeric',
+            'page_size' => 'required|numeric',
+            'id' => 'required|numeric',
+        ];
+    }
+
+    public function messages(): array {
+        return [
+            '*.required' => '缺少必要参数',
+        ];
+    }
+
+    public $scenes = [
+        '--lowercaseRequestName--_create' => ['', ''],
+        '--lowercaseRequestName--_delete' => ['', ''],
+        '--lowercaseRequestName--_edit' => ['', ''],
+        '--lowercaseRequestName--_list' => ['', ''],
+        '--lowercaseRequestName--_detail' => ['', ''],
+    ];
+}
+
+TOT;
+        if ($this->duan == "Store") {
+            $requestPath   = base_path('app/Http/Requests/Admin/Store');
+        }
+        if ($this->duan == "Manager") {
+            $requestPath   = base_path('app/Http/Requests/Admin/Manager');
+        }
+        if ($this->duan == "App") {
+            $requestPath   = base_path('app/Http/Requests/Api');
+        }
+        $requestPath = base_path('app') . str_replace(base_path('app'), '', $requestPath);
+
+        $currentNameSpace = $this->calculationNameSpace($requestPath);
+
+        $content = str_replace([
+            '--requestName--',
+            '--lowercaseRequestName--',
+            '--namespace--',
+            '--datetime--'
+        ],
+            [$this->className, lcfirst($this->className), $currentNameSpace,date("Y-m-d H:i:s")], $requestStub);
+
+        $requestFile = $requestPath . self::DS . $this->className . 'Request.php';
+        $createFlag     = true;
+
+        if (file_exists($requestFile) && !$this->option('force')) {
+            $createFlag = $this->confirm($this->className . 'Request.php' . ' 文件已存在，是否替换');
+        }
+
+        if (!$createFlag) {
+            return false;
+        }
+        $this->createDir($requestFile);
+        $fileSize = file_put_contents($requestFile, $content);
+
+        $this->info($requestFile . ' 文件创建成功' . $fileSize);
     }
 
 
@@ -267,6 +361,18 @@ use Exception;
         }catch (Exception $e){
             DB::rollBack();
             throw new BusinessException($e);
+        }
+        return true;
+    }
+
+     /**
+     * 修改
+     * @datetime --datetime--
+     */
+     public function edit($id, $data): bool {
+        $res = $this->--lowercaseLogicName--Service->edit($id, $data);
+        if (!$res) {
+            throw new BusinessException("修改失败");
         }
         return true;
     }
@@ -343,6 +449,15 @@ class --serviceName--Service {
         $--serviceName-- = --serviceName--Model::findOrFail($id);
         $--serviceName--->is_del = Constant::DELETED;
         return $--serviceName--->save();
+    }
+
+     /**
+     * 修改
+     * @datetime --datetime--
+     */
+    public function edit($id,$data): bool {
+        $--serviceName-- = --serviceName--Model::findOrFail($id);
+        return $--serviceName--->fill($data)->save();
     }
     /**
      * 列表
