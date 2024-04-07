@@ -1,0 +1,26 @@
+{
+    "name": "gmxiaoli/curd",
+    "description": "123",
+    "autoload": {
+        "psr-4": {
+            "Gmxiaoli\\Curd\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "gmxiaoli",
+            "email": "gmxiaoli@gmail.com"
+        }
+    ],
+    "require": {},
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Gmxiaoli\\Curd\\Provider\\GenConfigPublishProvider"
+            ],
+            "aliases": {
+                "G": "Gmxiaoli\\Curd\\Commands\\G"
+            }
+        }
+    }
+}
