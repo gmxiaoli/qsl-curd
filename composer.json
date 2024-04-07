@@ -1,6 +1,6 @@
 {
   "name": "gmxiaoli/qsl-curd",
-  "description": "简单、实用、接口生成、curd",
+  "description": "qsl-curd",
   "license": "MIT",
   "keywords": [
     "laravel",
