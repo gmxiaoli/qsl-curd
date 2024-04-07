@@ -116,6 +116,7 @@ class G extends Command {
 namespace --namespace--;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\PublicRequest;
 use AllowDynamicProperties;
 use App\Exceptions\BusinessException;
 use App\Utils\PageUtil;
@@ -127,6 +128,10 @@ use App\Logics\--controllerName--Logic;
         $this->--lowercasecontrollerName--Logic = app(--controllerName--Logic::class);
     }
 
+    /**
+     * 创建
+     * @datetime --datetime--
+     */
     public function create(Request $request): JsonResponse {
         $request->validate(["--lowercasecontrollerName--_create"]);
         $fields = ['', ''];
@@ -137,6 +142,10 @@ use App\Logics\--controllerName--Logic;
         return $this->success();
     }
 
+    /**
+     * 删除
+     * @datetime --datetime--
+     */
     public function delete(Request $request): JsonResponse {
         $request->validate(["--lowercasecontrollerName--_delete"]);
         $id = $request->input('id');
@@ -144,17 +153,32 @@ use App\Logics\--controllerName--Logic;
         return $this->success();
     }
 
+    /**
+     * 列表
+     * @datetime --datetime--
+     */
     public function list(Request $request): JsonResponse {
         $request->validate(["--lowercasecontrollerName--_list"]);
-        $page      = $request->input('page');
+        $page = $request->input('page');
         $page_size = $request->input('page_size');
-        $fields    = ['start_time', 'end_time'];
+        $fields = ['start_time', 'end_time'];
         foreach ($fields as $field) {
             $filters[$field] = $request->input($field);
         }
         $res  = $this->--lowercasecontrollerName--Logic->list($filters, $page, $page_size);
         $data = PageUtil::generate($page, $page_size, $res->total(), --controllerName--ListResource::collection($res->items()));
         return $this->success($data);
+    }
+
+    /**
+     * 详情
+     * @datetime --datetime--
+     */
+    public function detail(PublicRequest $request): JsonResponse {
+        $request->validate('id');
+        $id = $request->input('id');
+        $res = $this->--lowercasecontrollerName--Logic->detail($id);
+        return $this->success($res);
     }
 }
 
@@ -180,8 +204,9 @@ TOT;
             '--lowercasecontrollerName--',
             '--namespace--',
             '--CommonController--',
+            '--datetime--'
         ],
-            [$this->className, lcfirst($this->className), $currentNameSpace, $commonController], $controllerStub);
+            [$this->className, lcfirst($this->className), $currentNameSpace, $commonController,date("Y-m-d H:i:s")], $controllerStub);
 
         $controllerFile = $controllerPath . self::DS . $this->className . 'Controller.php';
         $createFlag     = true;
@@ -207,14 +232,59 @@ namespace App\Logics;
 
 use AllowDynamicProperties;
 use App\Services\--logicName--Service;
+use App\Exceptions\BusinessException;
+use DB;
+use Exception;
 
 #[AllowDynamicProperties] class --logicName--Logic {
     public function __construct() {
         $this->--lowercaseLogicName--Service = app(--logicName--Service::class);
     }
+     /**
+     * 创建
+     * @datetime --datetime--
+     */
+    public function create($data): bool {
+        DB::beginTransaction();
+        try {
+            $this->--lowercaseLogicName--Service->create($data);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            throw new BusinessException($e);
+        }
+        return true;
+    }
 
+    /**
+     * 删除
+     * @datetime --datetime--
+     */
+     public function delete($id): bool {
+        try {
+            $this->--lowercaseLogicName--Service->delete($id);
+            DB::commit();
+        }catch (Exception $e){
+            DB::rollBack();
+            throw new BusinessException($e);
+        }
+        return true;
+    }
+
+    /**
+     * 列表
+     * @datetime --datetime--
+     */
     public function list($filters, $page, $page_size){
         return $this->--lowercaseLogicName--Service->list($filters, $page, $page_size);
+    }
+
+     /**
+     * 详情
+     * @datetime --datetime--
+     */
+    public function detail($id){
+        return $this->--lowercaseLogicName--Service->detail($id);
     }
 }
 
@@ -227,8 +297,9 @@ TOT;
         $content = str_replace([
             '--logicName--',
             '--lowercaseLogicName--',
+            '--datetime--'
         ],
-            [$this->className, lcfirst($this->className)], $logicStub);
+            [$this->className, lcfirst($this->className),date("Y-m-d H:i:s")], $logicStub);
 
         $createFile = $logicPath . self::DS . $this->className . 'Logic.php';
         $createFlag = true;
@@ -256,9 +327,38 @@ use App\Constants\Constant;
 use App\Models\--serviceName--Model;
 
 class --serviceName--Service {
+
+     /**
+     * 创建
+     * @datetime --datetime--
+     */
+    public function create(array $where): mixed {
+        return --serviceName--Model::create($where)->id;
+    }
+    /**
+     * 删除
+     * @datetime --datetime--
+     */
+    public function delete(int $id): bool {
+        $--serviceName-- = --serviceName--Model::findOrFail($id);
+        $--serviceName--->is_del = Constant::DELETED;
+        return $--serviceName--->save();
+    }
+    /**
+     * 列表
+     * @datetime --datetime--
+     */
     public function list(array $filters, int $page, int $page_size){
         return --serviceName--Model::whereIsDel(Constant::UNDELETED)
             ->filter($filters)->paginate($page_size, '*', 'page', $page);
+    }
+     /**
+     * 详情
+     * @datetime --datetime--
+     */
+    public function detail(int $id){
+        return --serviceName--Model::whereIsDel(Constant::UNDELETED)
+            ->findOrFail($id);
     }
 }
 
@@ -269,8 +369,9 @@ TOT;
         $content = str_replace([
             '--serviceName--',
             '--lowercaseServiceName--',
+            '--datetime--'
         ],
-            [$this->className, lcfirst($this->className)], $serviceStub);
+            [$this->className, lcfirst($this->className),date("Y-m-d H:i:s")], $serviceStub);
 
         $createFile = $servicePath . self::DS . $this->className . 'Service.php';
         $createFlag = true;
