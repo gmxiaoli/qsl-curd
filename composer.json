@@ -36,7 +36,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Gmxiaoli\\Curd\\Provider\\GenConfigPublishProvider"
+                "Gmxiaoli\\Curd\\Providers\\GenConfigPublishProvider"
             ],
             "aliases": {
                 "G": "Gmxiaoli\\Curd\\Commands\\G"
