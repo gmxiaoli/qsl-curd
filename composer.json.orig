@@ -32,9 +32,15 @@
     "php": ">=7.1"
   },
   "minimum-stability": "dev",
+<<<<<<< HEAD
+    "type": "library",
+    "require": {},
+    "extra": {
+=======
   "type": "library",
   "require": {},
   "extra": {
+>>>>>>> 069d5322cb7183c374ac2a0889e1eba76cd83058
         "laravel": {
             "providers": [
                 "Gmxiaoli\\Curd\\Provider\\GenConfigPublishProvider"
