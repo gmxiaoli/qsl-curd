@@ -1,6 +1,16 @@
 {
-    "name": "gmxiaoli/curd",
-    "description": "123",
+    "name": "gmxiaoli/qsl-curd",
+    "description": "简单、实用、接口生成、curd",
+    "license": "MIT",
+    "keywords": [
+    "laravel",
+    "api",
+    "orm",
+    "request",
+    "crud",
+    "test",
+    "generator"
+  ],
     "autoload": {
         "psr-4": {
             "Gmxiaoli\\Curd\\": "src/"
@@ -12,6 +22,17 @@
             "email": "gmxiaoli@gmail.com"
         }
     ],
+      "require-dev": {
+  },
+  "autoload-dev": {
+    "psr-4": {
+    }
+  },
+  "require": {
+    "php": ">=7.1"
+  },
+  "minimum-stability": "dev",
+    "type": "library",
     "require": {},
     "extra": {
         "laravel": {
@@ -24,3 +45,5 @@
         }
     }
 }
+
+
