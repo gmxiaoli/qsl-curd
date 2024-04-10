@@ -3,6 +3,7 @@
 namespace Gmxiaoli\Curd\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class G extends Command {
@@ -258,11 +259,7 @@ use App\Http\Requests\ScenesBaseRequest;
 
 class --requestName--Request extends ScenesBaseRequest{
         public function rules(): array {
-        return [
-            'page' => 'required|numeric',
-            'page_size' => 'required|numeric',
-            'id' => 'required|numeric',
-        ];
+        return --rules--;
     }
 
     public function messages(): array {
@@ -298,9 +295,10 @@ TOT;
             '--requestName--',
             '--lowercaseRequestName--',
             '--namespace--',
-            '--datetime--'
+            '--datetime--',
+            '--rules--'
         ],
-            [$this->className, lcfirst($this->className), $currentNameSpace,date("Y-m-d H:i:s")], $requestStub);
+            [$this->className, lcfirst($this->className), $currentNameSpace,date("Y-m-d H:i:s"),var_export($this->generateRules('qsl_'.$this->tableName), true)], $requestStub);
 
         $requestFile = $requestPath . self::DS . $this->className . 'Request.php';
         $createFlag     = true;
@@ -446,9 +444,9 @@ class --serviceName--Service {
      * @datetime --datetime--
      */
     public function delete(int $id): bool {
-        $--serviceName-- = --serviceName--Model::findOrFail($id);
-        $--serviceName--->is_del = Constant::DELETED;
-        return $--serviceName--->save();
+        $--lowercaseServiceName-- = --serviceName--Model::findOrFail($id);
+        $--lowercaseServiceName--->is_del = Constant::DELETED;
+        return $--lowercaseServiceName--->save();
     }
 
      /**
@@ -456,8 +454,8 @@ class --serviceName--Service {
      * @datetime --datetime--
      */
     public function edit($id,$data): bool {
-        $--serviceName-- = --serviceName--Model::findOrFail($id);
-        return $--serviceName--->fill($data)->save();
+        $--lowercaseServiceName-- = --serviceName--Model::findOrFail($id);
+        return $--lowercaseServiceName--->fill($data)->save();
     }
     /**
      * 列表
@@ -613,6 +611,38 @@ TOT;
         file_exists($file) && unlink($file) && $this->info($file . ' 删除成功');
 
         $this->info($this->option('del_module') . '模块删除成功');
+    }
+
+
+    public function generateRules($tableName)
+    {
+        $columns = DB::select("SHOW COLUMNS FROM $tableName");
+        $rules = [];
+        foreach ($columns as $column) {
+            switch ($column->Type) {
+                case 'int':
+                    $rule = 'integer';
+                    break;
+                case 'varchar':
+                    $rule = 'string';
+                    preg_match('/varchar\((\d+)\)/', $column->Type, $matches);
+                    if (!empty($matches[1])) {
+                        $rule .= '|max:' . $matches[1];
+                    }
+                    break;
+                default:
+                    $rule = 'nullable';
+            }
+            $isRequired = $column->Null === 'NO';
+            if ($isRequired) {
+                $rule = 'required|' . $rule;
+            } else {
+                $rule = 'nullable|' . $rule;
+            }
+            $rules[$column->Field] = $rule;
+        }
+
+        return $rules;
     }
 
 }
