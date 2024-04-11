@@ -148,6 +148,19 @@ use App\Logics\--controllerName--Logic;
         return $this->success();
     }
 
+
+    /**
+     * 开关
+     * @datetime --datetime--
+     */
+    public function switch(--controllerName--Request $request): JsonResponse {
+        $request->validate(["--lowercasecontrollerName--_switch"]);
+        $id = $request->input('id');
+        $status = $request->input('status');
+        $this->--lowercasecontrollerName--Logic->switch($id,$status);
+        return $this->success();
+    }
+
     /**
      * 删除
      * @datetime --datetime--
@@ -258,6 +271,65 @@ namespace --namespace--;
 use App\Http\Requests\ScenesBaseRequest;
 
 class --requestName--Request extends ScenesBaseRequest{
+//规则参考：用后删除～
+//    'required' => '验证的字段必须存在于输入数据中，但不可以为空',
+//                  //以下情况视为空：1.该值为null,2.空字符串,3.空数组或空的可数对象,4.没有路径的上传文件
+//    'accepted' => '必须为yes,on,1,true',
+//    'active_url' => '是否是一个合法的url,基于PHP的checkdnsrr函数，因此也可以用来验证邮箱地址是否存在',
+//    'after:date' => '验证字段必须是给定日期后的值，比如required|date|after:tomorrow,通过PHP函数strtotime来验证',
+//    'after_or_equal:date' => '大于等于',
+//    'alpha' => '验证字段必须全是字母',
+//    'alpha_dash' => '验证字段可能具有字母、数字、破折号、下划线',
+//    'alpha_num' => '验证字段必须全是字母和数字',
+//    'array' => '数组',
+//    'before:date' => '小于',
+//    'before_or_equal:date' => '小于等于',
+//    'between:min,max' => '给定大小在min,max之间,字符串，数字，数组或者文件大小都用size函数评估',
+//    'boolean' => '必须为能转化为布尔值的参数，比如：true,false,1,0,"1","0"',
+//    'confirmed' => '字段必须与foo_confirmation字段值一致，比如，要验证的是password,输入中必须存在匹配的password_confirmation字段',
+//    'date' => '通过strtotime校验的有效日期',
+//    'date_equals:date' => '等于',
+//    'date_format:format' => 'date和date_format不应该同时使用，按指定时间格式传值',
+//    'different:field' => '验证的字段值必须与字段field的值相同',
+//    'digits:value' => '必须是数字，并且有确切的值',
+//    'digits_between:min,max' => '字段长度必须在min,max之间',
+//    'dimensions' => '验证的文件是图片并且图片比例必须符合规则,比如dimensions:min_width=100,min_height=200,可用
+//                    的规则有min_width,max_width,min_height,max_height,width,height,ratio',
+//    'distinct' => '无重复值',
+//    'email' => '符合e-mail地址格式',
+//    'exists:table,column' => '必须存在于指定的数据库表中',
+//    'file' => '成功上传的文件',
+//    'filled' => '验证的字段存在时不能为空',
+//    'image' => '验证的文件必须是图像，jpeg,png,bmp,gif,svg',
+//    'in:foo,bar,...' => '验证的字段必须包含在给定的值列表中',
+//    'in_array:anotherfield' => '验证的字段必须存在于另一个字段的值中',
+//    'integer' => '整数',
+//    'ip' => 'ip地址',
+//    'ipv4' => 'ipv4地址',
+//    'ipv6' => 'ipv6地址',
+//    'json' => 'json字符串',
+//    'max:value' => '大于',
+//    'mimetypes:text/plain,...' => '验证的文件必须与给定的MIME类型匹配',
+//    'mimes:foo,bar,...' => '验证的文件必须具有列出的其中一个扩展名对应的MIME类型',
+//    'min:value' => '小于',
+//    'nullable' => '可为null,可以包含空值的字符串和整数',
+//    'not_in:foo,bar...' => '不包含',
+//    'numeric' => '必须为数字',
+//    'present' => '验证的字段必须存在于输入数据中，但可以为空',
+//    'regex:pattern' => '验证的字段必须与给定正则表达式匹配',
+//
+//    'required_if:anotherfield,value,...' => '如果指定的anotherfield等于value时，被验证的字段必须存在且不为空',
+//    'required_unless:anotherfield,value,...' => '如果指定的anotherfield等于value时，被验证的字段不必存在',
+//    'required_with:foo,bar,...' => '只要指定的其它字段中有任意一个字段存在，被验证的字段就必须存在且不为空',
+//    'required_with_all:foo,bar,...' => '当指定的其它字段必须全部存在时，被验证的字段才必须存在且不为空',
+//    'required_without_all:foo,bar,...' => '当指定的其它字段必须全部不存在时，被验证的字段必须存在且不为空',
+//    'required_without:foo,bar,...' => '当指定的其它字段有一个字段不存在，被验证的字段就必须存在且不为空',
+//    'same:field' => '给定字段必须与验证字段匹配',
+//    'size:value' => '验证字段必须具有与给定值匹配的大小，对字符串，value对应字符数；对数字，对应给定的
+//                    整数值；对数组，对应count值；对文件，是文件大小（kb）',
+//    'timezone' => '验证字段是有效的时区标识符，根据PHP函数timezone_identifiers_list判断',
+//    'unique:table,column,except,idColumn' => '验证字段必须是数据库中唯一的',
+//    'url' => '有效的url',
         public function rules(): array {
         return --rules--;
     }
@@ -271,6 +343,7 @@ class --requestName--Request extends ScenesBaseRequest{
     public $scenes = [
         '--lowercaseRequestName--_create' => ['', ''],
         '--lowercaseRequestName--_delete' => ['', ''],
+        '--lowercaseRequestName--_switch' => ['', ''],
         '--lowercaseRequestName--_edit' => ['', ''],
         '--lowercaseRequestName--_list' => ['', ''],
         '--lowercaseRequestName--_detail' => ['', ''],
@@ -348,6 +421,21 @@ use Exception;
         return true;
     }
 
+     /**
+     * 开关
+     * @datetime --datetime--
+     */
+     public function switch($id,$status): bool {
+        try {
+            $this->--lowercaseLogicName--Service->switch($id,$status);
+            DB::commit();
+        }catch (Exception $e){
+            DB::rollBack();
+            throw new BusinessException($e);
+        }
+        return true;
+    }
+
     /**
      * 删除
      * @datetime --datetime--
@@ -362,6 +450,8 @@ use Exception;
         }
         return true;
     }
+
+
 
      /**
      * 修改
@@ -438,6 +528,15 @@ class --serviceName--Service {
      */
     public function create(array $where): mixed {
         return --serviceName--Model::create($where)->id;
+    }
+     /**
+     * 开关
+     * @datetime --datetime--
+     */
+    public function switch(int $id,int $status): bool {
+        $--lowercaseServiceName-- = --serviceName--Model::findOrFail($id);
+        $--lowercaseServiceName--->status = $status;
+        return $--lowercaseServiceName--->save();
     }
     /**
      * 删除
