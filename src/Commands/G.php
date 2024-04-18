@@ -561,7 +561,8 @@ use Eloquent;
  */
 class --modelName--Model extends BaseModel
 {
-    use HasFactory, DateTimeFormatter;
+    use DateTimeFormatter;
+    use HasFactory;
 
     protected $table='--tableName--';
 
