@@ -139,7 +139,7 @@ use App\Logics\--controllerName--Logic;
      * @datetime --datetime--
      */
     public function create(--controllerName--Request $request): JsonResponse {
-        $request->validate(["--lowercasecontrollerName--_create"]);
+        $request->validate("--lowercasecontrollerName--_create");
         $fields = ['', ''];
         foreach ($fields as $field) {
             $where[$field] = $request->input($field);
@@ -154,7 +154,7 @@ use App\Logics\--controllerName--Logic;
      * @datetime --datetime--
      */
     public function switch(--controllerName--Request $request): JsonResponse {
-        $request->validate(["--lowercasecontrollerName--_switch"]);
+        $request->validate("--lowercasecontrollerName--_switch");
         $id = $request->input('id');
         $status = $request->input('status');
         $this->--lowercasecontrollerName--Logic->switch($id,$status);
@@ -166,7 +166,7 @@ use App\Logics\--controllerName--Logic;
      * @datetime --datetime--
      */
     public function delete(--controllerName--Request $request): JsonResponse {
-        $request->validate(["--lowercasecontrollerName--_delete"]);
+        $request->validate("--lowercasecontrollerName--_delete");
         $id = $request->input('id');
         $this->--lowercasecontrollerName--Logic->delete($id);
         return $this->success();
@@ -177,7 +177,7 @@ use App\Logics\--controllerName--Logic;
      * @datetime --datetime--
      */
     public function edit(--controllerName--Request $request): JsonResponse {
-        $request->validate(['--lowercasecontrollerName--_edit']);
+        $request->validate('--lowercasecontrollerName--_edit');
         $fields = ['', ''];
         foreach ($fields as $field) {
             $data[$field] = $request->input($field);
@@ -192,7 +192,7 @@ use App\Logics\--controllerName--Logic;
      * @datetime --datetime--
      */
     public function list(--controllerName--Request $request): JsonResponse {
-        $request->validate(["--lowercasecontrollerName--_list"]);
+        $request->validate("--lowercasecontrollerName--_list");
         $page = $request->input('page');
         $page_size = $request->input('page_size');
         $fields = ['start_time', 'end_time'];
@@ -209,7 +209,7 @@ use App\Logics\--controllerName--Logic;
      * @datetime --datetime--
      */
     public function detail(--controllerName--Request $request): JsonResponse {
-        $request->validate(['--lowercasecontrollerName--_detail']);
+        $request->validate('--lowercasecontrollerName--_detail');
         $id = $request->input('id');
         $res = $this->--lowercasecontrollerName--Logic->detail($id);
         return $this->success($res);
